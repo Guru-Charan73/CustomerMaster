@@ -1,4 +1,4 @@
-namespace CustomerMaster;
+namespace CustomerMasters;
 
 using {
   managed,

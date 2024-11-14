@@ -1,6 +1,6 @@
 module.exports = function () {
 
-    const { CustomerMaster, ShiptoAddress, BilltoAddress } = this.entites;
+    const { CustomerMasters, ShiptoAddress, BilltoAddress } = this.entities;
 
     this.on("addCustomer", async (req, res) => {
 

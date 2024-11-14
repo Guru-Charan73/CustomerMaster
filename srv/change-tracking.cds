@@ -1,4 +1,4 @@
-using CustomerMaster as my from '../db/schema';
+using CustomerMasters as my from '../db/schema';
 using from '@cap-js/change-tracking';
 using sap.changelog as myy;
 
