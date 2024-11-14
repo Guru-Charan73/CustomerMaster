@@ -1,8 +1,8 @@
-module.exports =  function(){
+module.exports = function () {
 
-    const  { CustomerMaster ,ShiptoAddress,BilltoAddress} = this.entites;
+    const { CustomerMaster, ShiptoAddress, BilltoAddress } = this.entites;
 
-    this.on("addCustomer",async (req, res)=>{
+    this.on("addCustomer", async (req, res) => {
 
         const { ID, CustomerNumber, Soldto, Shipto, Billto, Payer, PARNR, PARAU, NAMEV, NAME1, TELF1, SORTL } = req.data;
         const data = req.data;
@@ -24,7 +24,63 @@ module.exports =  function(){
                     TELF1,
                     SORTL
                 }
-    })
+
+            };
+        }
+        try {
 
 
+            // IF-ELSE STATEMENT FOR VALIDATING THE DATA 
+            if (Object.keys(data).length != 0) {
+
+                //validating input fields if blank fields it should return error
+
+                //storing blank fields in nullKeys array
+                const nullKeys = [];
+
+                for (const key in data) {
+                    if (data[key] === "") {
+                        nullKeys.push(key);
+                        console.log(nullKeys)
+                    }
+                }
+
+
+
+                // returning error if blank fields are present 
+
+                if (nullKeys.length > 0) {
+                    console.log(`${nullKeys.join(" and ")} ${nullKeys.length > 1 ? 'are' : 'is'} missing.`);
+                    req.error(400, `${nullKeys.join(" and ")} ${nullKeys.length > 1 ? 'are' : 'is'} missing.`);
+                } else {
+                    console.log("No fields are missing.");
+                    //check if customer present in the database 
+                    const CustomerRecord = await SELECT.one.from(CustomerMaster).where({ CustomerNumber })
+                    console.log(CustomerRecord);
+
+                    //CREATED AND UPDATE IF ELSE STATEMENT 
+                    if (!CustomerRecord) {
+
+                        await INSERT.into(CustomerMaster).entries(data)
+                        req.reply(response("created"));
+
+                    }
+                    else {
+                        await this.update(CustomerMaster).set(data).where({ CustomerNumber })
+                        req.reply(response("updated"));
+                    }
+                }
+
+
+            } else {
+                req.error(400, "no input body")
+            }
+
+
+        } catch (error) {
+            return { success: false, message: 'Error adding customer' };
+
+        }
+
+    });
 }
